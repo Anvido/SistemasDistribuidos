@@ -1,0 +1,3 @@
+/home/ishkgur/Descargas/CUDA/VideoFiltering/video/parAvg/CMakeFiles/rebuild_cache.dir
+/home/ishkgur/Descargas/CUDA/VideoFiltering/video/parAvg/CMakeFiles/video.dir
+/home/ishkgur/Descargas/CUDA/VideoFiltering/video/parAvg/CMakeFiles/edit_cache.dir
