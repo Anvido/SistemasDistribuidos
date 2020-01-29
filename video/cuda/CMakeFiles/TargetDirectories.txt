@@ -1,3 +1,0 @@
-/home/ishkgur/Descargas/CUDA/cuda/CMakeFiles/rebuild_cache.dir
-/home/ishkgur/Descargas/CUDA/cuda/CMakeFiles/to_bw.dir
-/home/ishkgur/Descargas/CUDA/cuda/CMakeFiles/edit_cache.dir

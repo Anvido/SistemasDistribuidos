@@ -29,9 +29,19 @@ int main(){
    
   // Define the codec and create VideoWriter object.The output is stored in 'outcpp.avi' file. 
   VideoWriter video("outcpp.avi",VideoWriter::fourcc('M','J','P','G'), fps, Size(frame_width,frame_height)); 
+  
+  unsigned char *uframes[(int)num_frames];
+  
+  for(int i = 0; i < num_frames; i++)
+    uframes[i] = (unsigned char *) malloc(1080 *1920 * 3);
+  
+  int i = 0;
+
+  Mat frame; 
+
   while(1)
   { 
-    Mat frame; 
+    Mat result;
      
     // Capture frame-by-frame 
     cap >> frame;
@@ -39,35 +49,33 @@ int main(){
     // If the frame is empty, break immediately
     if (frame.empty())
       break;
-     
-    Mat result;
+    
     result.create(frame.size(), frame.type());
     const int nChannels = frame.channels();
+
+    //printf("%d %d\n", frame.rows, frame.cols);
 
     for(int i = 0; i < frame.rows; i++){
         for(int j = 0; j < frame.cols; j++){
             Vec3b intensity = frame.at<Vec3b>(i, j);
-            //int mean = (intensity.val[0] + intensity.val[1] + intensity.val[2])/3;
             int gray = .299f * intensity.val[0]  + .587f * intensity.val[1] + .114f * intensity.val[2];
             result.at<Vec3b>(i,j) = Vec3b(gray, gray, gray);
-            //result.at<uchar>(i,j) = 255 - frame.at<uchar>(i,j);
-            //result.at<uchar>(i,j) = .299f * intensity.val[0]  + .587f * intensity.val[1] + .114f * intensity.val[2];
         } 
     }
+   
+    memcpy ( uframes[i], result.ptr<unsigned char>(0), sizeof(unsigned char) * 1920 * 1080 * 3 );
 
-    
-    // Write the frame into the file 'outcpp.avi'
-    video.write(result);
-    
-    // Display the resulting frame    
-    //imshow( "Frame", result );
-  
-    // Press  ESC on keyboard to  exit
-    //char c = (char)waitKey(1);
-    //if( c == 27 ) 
-    //  break;
+    //uframes[i] =  result.ptr<unsigned char>(0);
+    i++;
   }
- 
+
+  for (int i =0; i < num_frames; i++){
+    cv::Mat output(1080, 1920, CV_8UC3, (void*) uframes[i]);
+    //cv::cvtColor(output, result, cv::COLOR_RGBA2BGR);
+    video.write(output);
+  }
+
+
   // When everything done, release the video capture and write object
   cap.release();
   video.release();

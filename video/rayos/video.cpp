@@ -29,9 +29,16 @@ int main(){
    
   // Define the codec and create VideoWriter object.The output is stored in 'outcpp.avi' file. 
   VideoWriter video("outcpp.avi",VideoWriter::fourcc('M','J','P','G'), fps, Size(frame_width,frame_height)); 
+  printf("halo 2");
+  unsigned char *uframes = (unsigned char *) malloc(1080 *1920 * 3 * (num_frames + 1));
+  printf("halo");
+  int i = 0;
+
+  Mat frame; 
+
   while(1)
   { 
-    Mat frame; 
+    Mat result;
      
     // Capture frame-by-frame 
     cap >> frame;
@@ -39,38 +46,44 @@ int main(){
     // If the frame is empty, break immediately
     if (frame.empty())
       break;
-     
-    Mat result;
+    
     result.create(frame.size(), frame.type());
     const int nChannels = frame.channels();
+
+    //printf("%d %d\n", frame.rows, frame.cols);
 
     for(int i = 0; i < frame.rows; i++){
         for(int j = 0; j < frame.cols; j++){
             Vec3b intensity = frame.at<Vec3b>(i, j);
-            //int mean = (intensity.val[0] + intensity.val[1] + intensity.val[2])/3;
             int gray = .299f * intensity.val[0]  + .587f * intensity.val[1] + .114f * intensity.val[2];
             result.at<Vec3b>(i,j) = Vec3b(gray, gray, gray);
-            //result.at<uchar>(i,j) = 255 - frame.at<uchar>(i,j);
-            //result.at<uchar>(i,j) = .299f * intensity.val[0]  + .587f * intensity.val[1] + .114f * intensity.val[2];
         } 
     }
+    long pos = i * sizeof(unsigned char) * 1920 * 1080 * 3 ;
+    //printf("pos %ld, frame %d\n", pos, i);
+   
+    memcpy ( uframes + pos, result.ptr<unsigned char>(0), sizeof(unsigned char) * 1920 * 1080 * 3 );
 
-    
-    // Write the frame into the file 'outcpp.avi'
-    video.write(result);
-    
-    // Display the resulting frame    
-    //imshow( "Frame", result );
-  
-    // Press  ESC on keyboard to  exit
-    //char c = (char)waitKey(1);
-    //if( c == 27 ) 
-    //  break;
+    //uframes[i] =  result.ptr<unsigned char>(0);
+    i++;
   }
- 
+
+  unsigned char * temp_frame = (unsigned char *) malloc(1920 * 1080 * 3);
+
+  for (int i =0; i < num_frames; i++){
+    long pos = i * sizeof(unsigned char) * 1920 * 1080 * 3 ;
+    memcpy ( temp_frame, uframes + pos, sizeof(unsigned char) * 1920 * 1080 * 3 );
+    cv::Mat output(1080, 1920, CV_8UC3, (void*) temp_frame);
+    //cv::cvtColor(output, result, cv::COLOR_RGBA2BGR);
+    video.write(output);
+  }
+
+
   // When everything done, release the video capture and write object
   cap.release();
   video.release();
+  free(uframes);
+  //free(temp_frame);
  
   // Closes all the windows
   destroyAllWindows();

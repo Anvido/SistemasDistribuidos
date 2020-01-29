@@ -1,3 +1,0 @@
-/home/ishkgur/Descargas/CUDA/VideoFiltering/video/seqAvg/CMakeFiles/rebuild_cache.dir
-/home/ishkgur/Descargas/CUDA/VideoFiltering/video/seqAvg/CMakeFiles/video.dir
-/home/ishkgur/Descargas/CUDA/VideoFiltering/video/seqAvg/CMakeFiles/edit_cache.dir
